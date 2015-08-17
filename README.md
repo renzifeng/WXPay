@@ -31,15 +31,13 @@
 
     #import "WXApi.h"
     #import "WXApiObject.h"
-    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
+    {
             // 1.注册微信
             [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
             return YES;
     }
-    - (BOOL)application:(UIApplication *)application
-    openURL:(NSURL *)url
-    sourceApplication:(NSString *)sourceApplication
-    annotation:(id)annotation
+    - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
     {
             return [WXApi handleOpenURL:url delegate:self];
     }
@@ -74,8 +72,6 @@
                         break;
                   }
             }
-    //    NSNotification *notification = [NSNotification notificationWithName:ORDER_PAY_NOTIFICATION object:strNote];
-    //    [[NSNotificationCenter defaultCenter] postNotification:notification];
             [[NSNotificationCenter defaultCenter] postNotificationName:ORDER_PAY_NOTIFICATION object:strNote];
             [Alert showWithTitle:strMsg];
     }
