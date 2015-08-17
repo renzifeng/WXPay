@@ -14,28 +14,26 @@
 
 ### 五、最后，使用WXApi的sendReq方法吊起微信。
 
-### 下面开始贴方法：
-
+下面开始贴方法：
+----------------------------------- 
 ### 准备工作：
 
-### 到微信开放平台,申请开通支付功能(唯一注意,bundleId需与工程一致),在财付通回馈的邮箱中获取以下信息(注:以下信息已修改,不可直接复制使用)
+到微信开放平台,申请开通支付功能(唯一注意,bundleId需与工程一致),在财付通回馈的邮箱中获取以下信息(注:以下信息已修改,不可直接复制使用)
 
-                APP_ID @"wxf120b5260432545"                                  //APPID
-
-                APP_SECRET @"998d17563f0d6d0181b90ff543656ygrs"  //appsecret
-
-                MCH_ID @"1269999401"                                              //商户号
-                PARTNER_ID @"xbM5MBCVOj2sEAs8KrMfwla4djpcQKuvG9"   //商户API密钥
+   APP_ID @"wxf120b5260432545"                                  //APPID
+   APP_SECRET @"998d17563f0d6d0181b90ff543656ygrs"              //appsecret
+    MCH_ID @"1269999401"                                        //商户号
+    PARTNER_ID @"xbM5MBCVOj2sEAs8KrMfwla4djpcQKuvG9"            //商户API密钥
 
 2.下载微信支付SDK
 
 3.AppDelegate 可直接复制使用
-        #import "WXApi.h"
-        #import "WXApiObject.h"
-        - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-        // 1.注册微信
+
+    #import "WXApi.h"
+    #import "WXApiObject.h"
+    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+     // 1.注册微信
    [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
- 
     return YES;
     }
     
@@ -83,7 +81,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ORDER_PAY_NOTIFICATION object:strNote];
     [Alert showWithTitle:strMsg];
     }
-  
     - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
    {
     return [WXApi handleOpenURL:url delegate:self];
