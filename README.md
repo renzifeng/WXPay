@@ -18,7 +18,7 @@
 ----------------------------------- 
 ### 准备工作：
 
-到微信开放平台,申请开通支付功能(唯一注意,bundleId需与工程一致),在财付通回馈的邮箱中获取以下信息(注:以下信息已修改,不可直接复制使用)
+1.到微信开放平台,申请开通支付功能(唯一注意,bundleId需与工程一致),在财付通回馈的邮箱中获取以下信息(注:以下信息已修改,不可直接复制使用)
 
       APP_ID @"wxf120b5260432545"                                  //APPID
       APP_SECRET @"998d17563f0d6d0181b90ff543656ygrs"              //appsecret
@@ -79,5 +79,91 @@
     {
             return [WXApi handleOpenURL:url delegate:self];
     }
+4.调起支付
 
-  
+      #import "WXApi.h"
+      #import "WXApiObject"
+      #import "WXUtil.h"
+      - (void)clickPayWithWechat
+      {
+            // 判断客户端是否安装微信/版本是否支持 
+            if ([self isWXAppInstalled]) {
+                  [self updateOrderInfo];
+            }
+      }
+      - (BOOL)isWXAppInstalled
+      {
+            // 1.判断是否安装微信
+            if (![WXApi isWXAppInstalled]) {
+                  [Alert showWithTitle:@"您尚未安装\"微信App\",请先安装后再返回支付"];
+                  return NO;
+            }
+            // 2.判断微信的版本是否支持最新Api
+            if (![WXApi isWXAppSupportApi]) {
+                  [Alert showWithTitle:@"您微信当前版本不支持此功能,请先升级微信应用"];
+                  return NO;
+            }
+            return YES;
+      }
+      - (void)updateOrderInfo
+      {
+            // 调用自己后台接口
+                  返回 prePay_id      
+      }
+      - (void)updateOrderInfoToWechat
+      {
+             // wechatModel 为自定义模型 存储微信支付所需参数
+            if (wechatModel.prepay_id != nil) {
+                  DLog(@" %@ ",wechatModel.prepay_id);
+                  NSString *package, *time_stamp, *nonce_str;
+                  time_t now;
+                  time(&now);
+                  time_stamp = [NSString stringWithFormat:@"%ld",now];
+                  // WXUtil类 可留言,我发邮箱   或加我qq   343381934 注明博客园 微信支付
+                  nonce_str = [WXUtil md5:time_stamp];
+                  package = @"Sign=WXPay";
+                  NSMutableDictionary *signParams = [NSMutableDictionary dictionary];
+                  [signParams setObject:WECHAT_APPID forKey:@"appid"];
+                  [signParams setObject:nonce_str forKey:@"noncestr"];
+                  [signParams setObject:package forKey:@"package"];
+                  [signParams setObject:WECHAT_MCH_ID forKey:@"partnerid"];
+                  [signParams setObject:time_stamp forKey:@"timestamp"];
+                  [signParams setObject:wechatModel.prepay_id forKey:@"prepayid"];
+                  NSString *sign = [self createMd5Sign:signParams];
+                  [signParams setObject:sign forKey:@"sign"];
+                  // 这里 调起微信  一个参数也不能少  重要的事 我不想说三遍了,调不起会来看三遍的 哈哈哈....
+                  PayReq *req = [[PayReq alloc] init];
+                  req.openID = WECHAT_APPID;
+                  req.partnerId = WECHAT_MCH_ID;
+                  req.prepayId = wechatModel.prepay_id;
+                  req.nonceStr = nonce_str;
+                  req.timeStamp = time_stamp.intValue;
+                  req.package = package;
+                  req.sign = sign;
+                  [WXApi sendReq:req];
+            }    
+      }
+      -(NSString*) createMd5Sign:(NSMutableDictionary*)dict
+      {
+            NSMutableString *contentString  =[NSMutableString string];
+            NSArray *keys = [dict allKeys];
+            //按字母顺序排序
+            NSArray *sortedArray = [keys sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                  return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            //拼接字符串
+            for (NSString *categoryId in sortedArray) {
+                  if (![[dict objectForKey:categoryId] isEqualToString:@""] && ![categoryId isEqualToString:@"sign"] && ![categoryId isEqualToString:@"key"])
+            {
+                  [contentString appendFormat:@"%@=%@&", categoryId, [dict objectForKey:categoryId]];
+            }
+        
+            }
+            //添加key字段
+            [contentString appendFormat:@"key=%@", wechatModel.key];
+            //得到MD5 sign签名
+            NSString *md5Sign =[WXUtil md5:contentString];
+            //    //输出Debug Info
+            //    [debugInfo appendFormat:@"MD5签名字符串：\n%@\n\n",contentString];
+             return md5Sign;
+      }
