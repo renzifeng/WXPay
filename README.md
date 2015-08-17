@@ -32,54 +32,56 @@
     #import "WXApi.h"
     #import "WXApiObject.h"
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-     // 1.注册微信
-     [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
-    return YES;
+            // 1.注册微信
+            [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
+            return YES;
     }
-      - (BOOL)application:(UIApplication *)application
+    - (BOOL)application:(UIApplication *)application
     openURL:(NSURL *)url
     sourceApplication:(NSString *)sourceApplication
     annotation:(id)annotation
     {
-    return [WXApi handleOpenURL:url delegate:self];
+            return [WXApi handleOpenURL:url delegate:self];
     }
     - (void)onResp:(BaseResp *)resp
     {
-    NSString *strMsg = [NSString stringWithFormat:@"errcode:%d",resp.errCode];
-    NSString *strTitle;
-    NSString *strNote;
-    if ([resp isKindOfClass:[PayResp class]]) {
-    // 支付返回结果,实际支付结果需要去微信服务器端查询
-    strTitle = @"支付结果";
-    }
-    switch (resp.errCode) {
-    case WXSuccess:{
-    strMsg = @"支付成功,可以进行洗车";
-    strNote = @"success";
-    break;
-    }
-    case WXErrCodeUserCancel:
-    strMsg = @"支付已取消";
-    strNote = @"cancel";
-    break;
-    case WXErrCodeSentFail:
-    strMsg = @"支付失败,请重新支付";
-    strNote = @"fail";
-    break;
-    default:{
-    strMsg = @"支付失败";
-    strNote = @"fail"; 
-    break;
-    }
-    }
+            NSString *strMsg = [NSString stringWithFormat:@"errcode:%d",resp.errCode];
+            NSString *strTitle;
+            NSString *strNote;
+            if ([resp isKindOfClass:[PayResp class]]) {
+                  // 支付返回结果,实际支付结果需要去微信服务器端查询
+                  strTitle = @"支付结果";
+            }
+            switch (resp.errCode) {
+                  case WXSuccess:{
+                        strMsg = @"支付成功,可以进行洗车";
+                        strNote = @"success";
+                        break;
+                  }
+                  case WXErrCodeUserCancel:{
+                        strMsg = @"支付已取消";
+                        strNote = @"cancel";
+                        break;
+                  }
+                  case WXErrCodeSentFail: {
+                        strMsg = @"支付失败,请重新支付";
+                        strNote = @"fail";
+                        break;
+                  }
+                  default:{
+                        strMsg = @"支付失败";
+                        strNote = @"fail"; 
+                        break;
+                  }
+            }
     //    NSNotification *notification = [NSNotification notificationWithName:ORDER_PAY_NOTIFICATION object:strNote];
     //    [[NSNotificationCenter defaultCenter] postNotification:notification];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ORDER_PAY_NOTIFICATION object:strNote];
-    [Alert showWithTitle:strMsg];
+            [[NSNotificationCenter defaultCenter] postNotificationName:ORDER_PAY_NOTIFICATION object:strNote];
+            [Alert showWithTitle:strMsg];
     }
     - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
     {
-    return [WXApi handleOpenURL:url delegate:self];
+            return [WXApi handleOpenURL:url delegate:self];
     }
 
   
