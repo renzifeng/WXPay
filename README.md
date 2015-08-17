@@ -30,10 +30,10 @@ PARTNER_ID @"xbM5MBCVOj2sEAs8KrMfwla4djpcQKuvG9"   //商户API密钥
 2.下载微信支付SDK
 
 3.AppDelegate 可直接复制使用
-    1 #import "WXApi.h"
-    #import "WXApiObject.h"
-    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-   // 1.注册微信
+        #import "WXApi.h"
+        #import "WXApiObject.h"
+        - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+        // 1.注册微信
    [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
  
     return YES;
