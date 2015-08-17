@@ -20,10 +20,10 @@
 
 到微信开放平台,申请开通支付功能(唯一注意,bundleId需与工程一致),在财付通回馈的邮箱中获取以下信息(注:以下信息已修改,不可直接复制使用)
 
-   APP_ID @"wxf120b5260432545"                                  //APPID
-   APP_SECRET @"998d17563f0d6d0181b90ff543656ygrs"              //appsecret
-    MCH_ID @"1269999401"                                        //商户号
-    PARTNER_ID @"xbM5MBCVOj2sEAs8KrMfwla4djpcQKuvG9"            //商户API密钥
+      APP_ID @"wxf120b5260432545"                                  //APPID
+      APP_SECRET @"998d17563f0d6d0181b90ff543656ygrs"              //appsecret
+      MCH_ID @"1269999401"                                        //商户号
+      PARTNER_ID @"xbM5MBCVOj2sEAs8KrMfwla4djpcQKuvG9"            //商户API密钥
 
 2.下载微信支付SDK
 
@@ -33,57 +33,53 @@
     #import "WXApiObject.h"
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      // 1.注册微信
-   [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
+     [WXApi registerApp:WECHAT_APPID withDescription:@"weichatpayblog"];
     return YES;
     }
-    
-    - (BOOL)application:(UIApplication *)application
+      - (BOOL)application:(UIApplication *)application
     openURL:(NSURL *)url
     sourceApplication:(NSString *)sourceApplication
     annotation:(id)annotation
     {
     return [WXApi handleOpenURL:url delegate:self];
     }
-    
-   - (void)onResp:(BaseResp *)resp
+    - (void)onResp:(BaseResp *)resp
     {
     NSString *strMsg = [NSString stringWithFormat:@"errcode:%d",resp.errCode];
     NSString *strTitle;
     NSString *strNote;
     if ([resp isKindOfClass:[PayResp class]]) {
     // 支付返回结果,实际支付结果需要去微信服务器端查询
-   strTitle = @"支付结果";
+    strTitle = @"支付结果";
     }
-    
     switch (resp.errCode) {
     case WXSuccess:{
     strMsg = @"支付成功,可以进行洗车";
-   strNote = @"success";
+    strNote = @"success";
     break;
-   }
-   case WXErrCodeUserCancel:
-   strMsg = @"支付已取消";
+    }
+    case WXErrCodeUserCancel:
+    strMsg = @"支付已取消";
     strNote = @"cancel";
     break;
     case WXErrCodeSentFail:
     strMsg = @"支付失败,请重新支付";
     strNote = @"fail";
-   break;
-   default:{
-   strMsg = @"支付失败";
-    strNote = @"fail";
-   break;
+    break;
+    default:{
+    strMsg = @"支付失败";
+    strNote = @"fail"; 
+    break;
     }
     }
-    
     //    NSNotification *notification = [NSNotification notificationWithName:ORDER_PAY_NOTIFICATION object:strNote];
-   //    [[NSNotificationCenter defaultCenter] postNotification:notification];
+    //    [[NSNotificationCenter defaultCenter] postNotification:notification];
     [[NSNotificationCenter defaultCenter] postNotificationName:ORDER_PAY_NOTIFICATION object:strNote];
     [Alert showWithTitle:strMsg];
     }
     - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
-   {
+    {
     return [WXApi handleOpenURL:url delegate:self];
-   }
+    }
 
   
