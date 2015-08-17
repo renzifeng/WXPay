@@ -90,7 +90,7 @@
       {
             // 判断客户端是否安装微信/版本是否支持 
             if ([self isWXAppInstalled]) {
-                  [self updateOrderInfo];
+                  [self updateOrderInfoToWechat];
             }
       }
       - (BOOL)isWXAppInstalled
@@ -107,13 +107,10 @@
             }
             return YES;
       }
-      - (void)updateOrderInfo
-      {
-            // 调用自己后台接口
-                  返回 prePay_id      
-      }
       - (void)updateOrderInfoToWechat
       {
+             // 调用自己后台接口
+             // 返回 prePay_id  
              // wechatModel 为自定义模型 存储微信支付所需参数
             if (wechatModel.prepay_id != nil) {
                   DLog(@" %@ ",wechatModel.prepay_id);
@@ -121,7 +118,6 @@
                   time_t now;
                   time(&now);
                   time_stamp = [NSString stringWithFormat:@"%ld",now];
-                  // WXUtil类 可留言,我发邮箱   或加我qq   343381934 注明博客园 微信支付
                   nonce_str = [WXUtil md5:time_stamp];
                   package = @"Sign=WXPay";
                   NSMutableDictionary *signParams = [NSMutableDictionary dictionary];
